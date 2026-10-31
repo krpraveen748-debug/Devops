@@ -1,0 +1,69 @@
+mkdir Program_02
+cd Program_02
+mkdir src
+
+nano src/index.js
+
+const express = require('express');
+const app = express();
+const PORT = 3000;
+app.get('/', (req, res) => {
+    res.send('Hello from multi-stage Docker!');
+});
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
+nano package.json
+
+{
+  "name": "program-2",
+  "version": "1.0.0",
+  "description": "A Node.js app with multi-stage Dockerfile",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "mkdir -p dist && cp -r src/* dist/"
+  },
+  "author": "Deepika K",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
+
+sudo apt update
+sudo apt install -y nodejs npm
+node --version
+npm --version
+npm install
+
+nano Dockerfile
+
+# Stage 1: Builder
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+# Stage 2: Production
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package-lock.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+EXPOSE 3000
+CMD ["node", "dist/index.js"]
+
+sudo docker build -t program-2 .    //build docker images
+sudo docker images     //check
+sudo docker run -d -p 3000:3000 --name program2-container program-2     / check running container
+sudo docker ps
+sudo docker logs program2-container
+curl http://localhost:3000    //excute
+firefox http://localhost:3000     //excute
+sudo docker stop program2-container    //stop container
+sudo docker rm program2-container    /remove container
+sudo docker rmi program-2    //remove image
