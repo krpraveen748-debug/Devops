@@ -41,6 +41,12 @@ curl http://localhost:5000    // excute in terminal
 firefox http://localhost:5000    //excute in firefox
 xdg-open http://localhost:5000    //default
 
+    //After completing the experiment
+sudo docker stop flask-container
+sudo docker rm flask-container
+sudo docker rmi program-1
+
+
 
 
 
