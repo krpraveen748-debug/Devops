@@ -1,0 +1,53 @@
+mkdir Program-1
+  cd Program-1
+
+  
+        nano app.py
+
+from flask import Flask
+app = Flask(__name__)
+@app.route("/")
+def hello():
+    return "Hello, Praveen Here, Learning DevOps! I got the output successfully!"
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+        nano requirements.txt
+
+  flask
+
+        nano Dockerfile
+
+FROM python:3.9-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=5000
+EXPOSE 5000
+CMD ["flask", "run"]
+
+
+
+
+  ls
+sudo docker build -t program-1 .    //build docker image
+  sudo docker images 
+sudo docker run -d -p 5000:5000 --name flask-container program-1    //run container
+  sudo docker ps    //check container
+curl http://localhost:5000    // excute in terminal
+firefox http://localhost:5000    //excute in firefox
+xdg-open http://localhost:5000    //default
+
+
+
+
+
+
+
+
+
+
+
